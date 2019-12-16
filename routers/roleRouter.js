@@ -24,7 +24,7 @@ router.post('/add', (req,res)=>{
 
 // 根据角色名称来查找角色编号
 router.get('/findRoleIdByName', (req,res)=>{
-  const {roleName} = req.body;
+  const {roleName} = req.query;
   Role.findByName(roleName)
   .then((roleInfo) => {
     res.json({

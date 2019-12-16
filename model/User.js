@@ -13,9 +13,14 @@ const User = mongoose.model('user', new mongoose.Schema({
     required: true,
   },
   // 角色关联
-  role: {
+  roleId: {
     type: mongoose.SchemaTypes.ObjectId,
     ref: 'Role'
+  },
+  // 角色类型
+  roleType: {
+    type: String,
+    required: true
   },
   // 注册时间
   registerDate: {
@@ -81,12 +86,24 @@ module.exports.add = async (userInfo) => {
   return await user.save();
 }
 
+// 根据用户名和密码来查找数据
+module.exports.findByNameAndPsd = async(userName, password) => {
+  let result = await User.find({
+    userName,
+    password
+  });
+  if(result.length != 0) {
+    return result
+  }else {
+    return ''
+  }
+}
+
 // 根据角色id 查找角色用户 分页功能
 module.exports.findUserByRoleId = async (roleId, skip, count) => {
   let id = mongoose.Types.ObjectId(roleId);
-  return await User.find({
-    "_id": id
-  }).skip(skip).limit(count);
+  return await User.find({roleId: id});
+  // .skip(skip).limit(count)
 }
 
 // 根据用户 id 来查找用户

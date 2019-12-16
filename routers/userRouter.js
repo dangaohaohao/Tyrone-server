@@ -9,44 +9,88 @@ router.post('/register', (req,res)=>{
   let roleType = userInfo.roleType;
   let roleId = 0;
 
-  // 查找角色 ID
+  // 查找角色 ID 注册
   (async function(roleType) {
     switch(roleType) {
       case '0':
         roleId = await Role.findByName('管理员');
-        userInfo = {...userInfo, role: roleId}
+        userInfo = {...userInfo, roleId: roleId, roleType: roleType}
+        User.add(userInfo)
+        .then((userInfor)=>{
+          res.json({
+            code: 0,
+            message: 'ok',
+            data: null,
+          })
+        })
+        .catch((error)=>{
+          res.json({
+            code: -1,
+            message: error.message,
+            data: null,
+          })
+        })
         break;
       case '1':
         roleId = await Role.findByName('Agent');
-        userInfo = {...userInfo, role: roleId}
+        userInfo = {...userInfo, roleId: roleId, roleType: roleType}
+        User.add(userInfo)
+        .then((userInfor)=>{
+          res.json({
+            code: 0,
+            message: 'ok',
+            data: null,
+          })
+        })
+        .catch((error)=>{
+          res.json({
+            code: -1,
+            message: error.message,
+            data: null,
+          })
+        })
         break;
       case '2':
         roleId = await Role.findByName('房东');
-        userInfo = {...userInfo, role: roleId}
+        userInfo = {...userInfo, roleId: roleId, roleType: roleType}
+        User.add(userInfo)
+        .then((userInfor)=>{
+          res.json({
+            code: 0,
+            message: 'ok',
+            data: null,
+          })
+        })
+        .catch((error)=>{
+          res.json({
+            code: -1,
+            message: error.message,
+            data: null,
+          })
+        })
         break;
       case '3':
         roleId = await Role.findByName('房客');
-        userInfo = {...userInfo, role: roleId}
+        userInfo = {...userInfo, roleId: roleId, roleType: roleType}
+        User.add(userInfo)
+        .then((userInfor)=>{
+          res.json({
+            code: 0,
+            message: 'ok',
+            data: null,
+          })
+        })
+        .catch((error)=>{
+          res.json({
+            code: -1,
+            message: error.message,
+            data: null,
+          })
+        })
         break;
     }
   })(roleType);
-  
 
-  User.add(userInfo)
-  .then((userInfor)=>{
-    res.json({
-      code: 0,
-      message: 'ok',
-      data: null,
-    })
-  })
-  .catch((error)=>{
-    res.json({
-      code: -1,
-      message: error.message,
-      data: null,
-    })
-  })
 });
 
 // 登录
@@ -88,14 +132,51 @@ router.get('/logout', (req, res)=>{
 });
 
 // 根据角色 id 查找角色用户 分页功能
-router.get('/findUserByRoleId', async (req, res) => {
-  let {roleId, skip, count} = req.query;
-  let list = await User.findUserByRoleId(roleId, skip, count);
-  res.json({
-    code: 0,
-    message: 'ok',
-    data: list
-  })
+router.get('/findUserByRoleType', async (req, res) => {
+  let {roleType, skip, count} = req.query;
+  let list = null;
+  // 根据 roleType 请求拿到 roleId
+  (async function(roleType) {
+    switch(roleType) {
+      case '0':
+        roleInfo = await Role.findByName('管理员');
+        list = await User.findUserByRoleId(roleInfo._id, skip, count);
+        res.json({
+          code: 0,
+          message: 'ok',
+          data: list
+        })
+        break;
+      case '1':
+        roleInfo = await Role.findByName('Agent');
+        list = await User.findUserByRoleId(roleInfo._id, skip, count);
+        res.json({
+          code: 0,
+          message: 'ok',
+          data: list
+        })
+        break;
+      case '2':
+        roleInfo = await Role.findByName('房东');
+        list = await User.findUserByRoleId(roleInfo._id, skip, count);
+        res.json({
+          code: 0,
+          message: 'ok',
+          data: list
+        })
+        break;
+      case '3':
+        roleInfo = await Role.findByName('房客');
+        list = await User.findUserByRoleId(roleInfo._id, skip, count);
+        res.json({
+          code: 0,
+          message: 'ok',
+          data: list
+        })
+        break;
+    }
+  })(roleType);
+
 });
 
 // 根据用户 id 来查找用户
