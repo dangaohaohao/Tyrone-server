@@ -1,7 +1,9 @@
 const express = require('express');
 const User = require('../model/User');
 const Role = require('../model/Role');
+const {mock} = require('mockjs');
 const router = new express.Router();
+
 
 // 注册  0:管理员 / 1:Agent / 2:房东 / 3: 房客
 router.post('/register', (req,res)=>{
@@ -93,6 +95,7 @@ router.post('/register', (req,res)=>{
 
 });
 
+
 // 登录
 router.post('/login', (req, res)=>{
   const {userName, password} = req.body;
@@ -122,6 +125,7 @@ router.post('/login', (req, res)=>{
   })
 });
 
+
 //退出登录
 router.get('/logout', (req, res)=>{
   res.json({
@@ -130,6 +134,7 @@ router.get('/logout', (req, res)=>{
     data: null
   });
 });
+
 
 // 根据角色 id 查找角色用户 分页功能
 router.get('/findUserByRoleType', async (req, res) => {
@@ -179,6 +184,7 @@ router.get('/findUserByRoleType', async (req, res) => {
 
 });
 
+
 // 根据用户 id 来查找用户
 router.get('/findUserById', async (req, res) => {
   let {userId} = req.query;
@@ -190,16 +196,242 @@ router.get('/findUserById', async (req, res) => {
   })
 });
 
-// 根据特定条件查询用户 用户来源(0/1/2) / 实名认证情况(0/1/2/3) / 银行卡绑定情况(0/1) / 用户状态(0/1) / 最近登录时间 
-router.get('/findUserByRequireMent', async (req, res) => {
-  let {requireMent} = req.query;
-  let userInfo = await User.findUserByRequireMent(requireMent);
+
+// 根据用户 姓名 来查找用户
+router.get('/findUserByName', async (req, res) => {
+  let {userName} = req.query;
+  let userInfo = await User.findUserByName(userName);
   res.json({
     code: 0,
     message: 'ok',
     data: userInfo
   })
 });
+
+
+// 导出excel  还没有写好
+// 根据特定条件查询用户导出excel
+router.get('/excel', async (req, res) => {
+
+  let requireMent = req.query;
+  let userInfo = await User.findUserByRequireMent(requireMent);
+
+  let conf ={};
+  conf.stylesXmlFile = "styles.xml";
+  conf.name = "房东管理";
+  conf.cols = [
+    {
+      caption: '房东编号',
+      type: 'string'
+    },
+    {
+      caption: '房东姓名',
+      type: 'string'
+    },
+    {
+      caption: '手机号',
+      type: 'string'
+    },
+    {
+      caption: '邮箱',
+      type: 'string'
+    },
+    {
+      caption: '账面余额',
+      type: 'number'
+    },
+    {
+      caption: '房屋数量',
+      type: 'number'
+    },
+    {
+      caption: '实名认证情况',
+      type: 'string'
+    },
+    {
+      caption: '银行卡绑定情况',
+      type: 'string'
+    },
+    {
+      caption: '默认交易银行卡号',
+      type: 'string'
+    },
+    {
+      caption: '房东来源',
+      type: 'string'
+    },
+    {
+      caption: '注册时间',
+      type: 'string'
+    },
+    {
+      caption: '最近登录时间',
+      type: 'string'
+    },
+    {
+      caption: '房东状态',
+      type: 'string'
+    },
+    {
+      caption: '操作',
+      type: 'string'
+    },
+  ];
+  conf.rows = userInfo.map(item=>Object.values(item));
+
+  var result = nodeExcel.execute(conf);
+  res.setHeader('Content-Type', 'application/vnd.openxmlformats');
+  res.setHeader("Content-Disposition", "attachment; filename=" + "mysheet.xlsx");
+  res.end(result, 'binary');
+
+});
+
+
+// 根据用户 id 来改变房东状态
+router.post('/changeUserStatusByUserId', async (req, res) => {
+  let {userId, status} = req.body;
+  User.changeUserStatusByUserId(userId, status)
+  .then(result=>{
+    res.json({
+      code: 0, 
+      message: 'ok',
+      data: null
+    });
+  })
+  .catch(error=>{
+    res.json({
+      code: -1, 
+      message: error.message,
+      data: null
+    });
+  })
+});
+
+
+// mock数据
+// 用户数据 mock 0:管理员 / 1:Agent / 2:房东 / 3: 房客
+router.get('/userInfoMock', async (req, res) => {
+
+  let {roleType} = req.query;
+
+  switch(roleType) {
+    case '0':
+        res.json({
+          code: 0,
+          message: 'ok',
+          data: mock({
+            "list|2": [{
+              userName : "@cname()",
+              password : "@string()",
+              roleId : "5df5d2a676dc481f7408db1c",
+              roleType : "0",
+              registerDate : new Date().getTime(),
+              nearDate : new Date().getTime(),
+              tel : "13319470485",
+              email : "1109763222@qq.co",
+              certification: '1',
+              userAvar: "http://dummyimage.com/'300x300'/c6f279",
+              sex : "0",
+              birthday : '',
+              userSource : "0",
+              status : "0",
+              payPassword : "000000",
+              mailAddress : "湖南长沙",
+              bookBalance : 0,       
+            }]
+          })
+        }) 
+    break;
+    case '1':
+        res.json({
+          code: 0,
+          message: 'ok',
+          data: mock({
+            "list|10": [{
+              userName : "@cname()",
+              password : "@string()",
+              roleId : "5df5d2e076dc481f7408db1f",
+              roleType : "1",
+              registerDate : new Date().getTime(),
+              nearDate : new Date().getTime(),
+              tel : "13319470485",
+              email : "1109763222@qq.co",
+              certification: '1',
+              userAvar: "http://dummyimage.com/'300x300'/c6f279",
+              sex : "0",
+              birthday : '',
+              userSource : "0",
+              status : "0",
+              payPassword : "000000",
+              mailAddress : "湖南长沙",
+              bookBalance : 0,       
+            }]
+          })
+        }) 
+    break;
+    case '2':
+        res.json({
+          code: 0,
+          message: 'ok',
+          data: mock({
+            "list|15": [{
+              userName : "@cname()",
+              password : "@string()",
+              roleId : "5df5d2d476dc481f7408db1d",
+              roleType : "2",
+              registerDate : new Date().getTime(),
+              nearDate : new Date().getTime(),
+              tel : "13319470485",
+              email : "1109763222@qq.co",
+              certification: '1',
+              userAvar: "http://dummyimage.com/'300x300'/c6f279",
+              sex : "0",
+              birthday : '',
+              userSource : "0",
+              status : "0",
+              payPassword : "000000",
+              mailAddress : "湖南长沙",
+              bookBalance : 0,       
+            }]
+          })
+        }) 
+    break;
+    case '3':
+        res.json({
+          code: 0,
+          message: 'ok',
+          data: mock({
+            "list|20": [{
+              userName : "@cname()",
+              password : "@string()",
+              roleId : "5df767db30e65e30946f8fe4",
+              roleType : "3",
+              registerDate : new Date().getTime(),
+              nearDate : new Date().getTime(),
+              tel : "13319470485",
+              email : "1109763222@qq.co",
+              certification: '1',
+              userAvar: "http://dummyimage.com/'300x300'/c6f279",
+              sex : "0",
+              birthday : '',
+              userSource : "0",
+              status : "0",
+              payPassword : "000000",
+              mailAddress : "湖南长沙",
+              bookBalance : 0,       
+            }]
+          })
+        }) 
+    break;
+  }
+
+})
+
+
+
+
+
+
 
 
 module.exports = router;

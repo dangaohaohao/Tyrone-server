@@ -42,6 +42,16 @@ const User = mongoose.model('user', new mongoose.Schema({
     type: String,
     required: true,
   },
+  // 实名认证情况 0:已认证 / 1:未认证 / 2:认证中 / 3:认证失败
+  certification: {
+    type: String,
+    default: 1
+  },
+  // 用户头像
+  userAvar: {
+    type: String,
+    default: "http://dummyimage.com/'300x300'/c6f279"
+  },
   // 性别 0:男 1:女 2:保密
   sex: {
     type: String,
@@ -57,7 +67,7 @@ const User = mongoose.model('user', new mongoose.Schema({
     type: String,
     default: 0
   },
-  // 用户状态 0:正常 / 1:删除
+  // 用户状态 0:正常 / 1:禁用
   status: {
     type: String,
     required: true,
@@ -76,7 +86,7 @@ const User = mongoose.model('user', new mongoose.Schema({
   bookBalance: {
     type: Number,
     default: 0
-  }
+  },
 
 }));
 
@@ -114,9 +124,20 @@ module.exports.findUserById = async (userId) => {
   });
 }
 
+// 根据用户 姓名 来查找用户
+module.exports.findUserByName = async (userName) => {
+  return await User.find({userName: userName});
+}
+
 // 根据特定条件查询用户 用户来源(0/1/2) / 实名认证情况(0/1/2/3) / 银行卡绑定情况(0/1) / 用户状态(0/1) / 最近登录时间 
 module.exports.findUserByRequireMent = async (requireMent) => {
   return await User.find(requireMent);
+}
+
+// 根据用户 id 来改变房东状态
+module.exports.changeUserStatusByUserId = async (userId, status) => {
+  let id = mongoose.Types.ObjectId(userId);
+  return await User.findByIdAndUpdate(id, {status: status});
 }
 
 
