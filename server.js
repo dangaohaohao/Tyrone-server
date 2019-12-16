@@ -19,12 +19,16 @@ server.all('*', (req, res, next) => {
   next();
 });
 
+
 // 用户
 server.use('/api/user', require('./routers/userRouter'));
 // 角色
 server.use('/api/role', require('./routers/roleRouter'));
 // 订单
 server.use('/api/order', require('./routers/orderRouter'));
+// 财富
+server.use('/api/finance', require('./routers/financeRouter'));
+
 
 // 连接数据库 启动服务
 mongoose.connect('mongodb://localhost:27017/Tyrone', {
