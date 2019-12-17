@@ -124,8 +124,9 @@ module.exports.findUserById = async (userId) => {
 }
 
 // 根据用户 姓名 来查找用户
-module.exports.findUserByName = async (userName) => {
-  return await User.find({userName: userName});
+module.exports.findUserByName = async (userName, roleId, skip, count) => {
+  let id = mongoose.Types.ObjectId(roleId);
+  return await User.find({userName, roleId: id}).skip(Number(skip)).limit(Number(count));
 }
 
 // 根据特定条件查询用户 用户来源(0/1/2) / 实名认证情况(0/1/2/3) / 银行卡绑定情况(0/1) / 用户状态(0/1) / 最近登录时间 
@@ -139,4 +140,15 @@ module.exports.changeUserStatusByUserId = async (userId, status) => {
   return await User.findByIdAndUpdate(id, {status: status});
 }
 
+// 根据多个参数查找用户
+module.exports.getUserBymultiParams = async (userSource, certification, status, roleId, skip, count) => {
+  let id = mongoose.Types.ObjectId(roleId);
+  return await User.find({userSource, certification, status, roleId: id}).skip(Number(skip)).limit(Number(count));
+}
+
+// 修改用户信息
+module.exports.modifyUserInfo = async (tel, email, sex, userSource, status, mailAddress, certification, userId) => {
+  let id = mongoose.Types.ObjectId(userId);
+  return await User.findByIdAndUpdate(id, {tel, email, sex, userSource, status, mailAddress, certification});
+}
 

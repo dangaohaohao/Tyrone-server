@@ -7,7 +7,7 @@ const router = new express.Router();
 
 
 // mock 数据
-// mock 平台流水数据  
+ 
 // recharge:充值 / rent:房租缴纳 / service: 服务费用 / behelf:代缴费用
 // deposit:提现 / service: 服务费用支出 / behelf: 代缴费支出
 function mockRangeAccountData(begin, end){
@@ -41,7 +41,7 @@ function mockRangeAccountData(begin, end){
   };
   return data;
 }
-
+// mock 平台流水数据 
 router.get('/getAccountData', (req, res)=>{
   const {begin, end, count} = req.query;
 

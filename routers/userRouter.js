@@ -5,6 +5,28 @@ const {mock} = require('mockjs');
 const nodeExcel = require('excel-export');
 const router = new express.Router();
 
+// 根据角色类型来查找角色信息
+async function getRoleIdByRoleType(roleType) {
+  switch(roleType) {
+    case '0':
+      roleInfo = await Role.findByName('管理员');
+      return roleInfo;
+      break;
+    case '1':
+      roleInfo = await Role.findByName('Agent');
+      return roleInfo;
+      break;
+    case '2':
+      roleInfo = await Role.findByName('房东');
+      return roleInfo;
+      break;
+    case '3':
+      roleInfo = await Role.findByName('房客');
+      return roleInfo;
+      break;
+  }
+}
+
 
 // 注册  0:管理员 / 1:Agent / 2:房东 / 3: 房客
 router.post('/register', (req,res)=>{
@@ -142,46 +164,13 @@ router.get('/findUserByRoleType', async (req, res) => {
   let {roleType, skip, count} = req.query;
   let list = null;
   // 根据 roleType 请求拿到 roleId
-  (async function(roleType) {
-    switch(roleType) {
-      case '0':
-        roleInfo = await Role.findByName('管理员');
-        list = await User.findUserByRoleId(roleInfo._id, skip, count);
-        res.json({
-          code: 0,
-          message: 'ok',
-          data: list
-        })
-        break;
-      case '1':
-        roleInfo = await Role.findByName('Agent');
-        list = await User.findUserByRoleId(roleInfo._id, skip, count);
-        res.json({
-          code: 0,
-          message: 'ok',
-          data: list
-        })
-        break;
-      case '2':
-        roleInfo = await Role.findByName('房东');
-        list = await User.findUserByRoleId(roleInfo._id, skip, count);
-        res.json({
-          code: 0,
-          message: 'ok',
-          data: list
-        })
-        break;
-      case '3':
-        roleInfo = await Role.findByName('房客');
-        list = await User.findUserByRoleId(roleInfo._id, skip, count);
-        res.json({
-          code: 0,
-          message: 'ok',
-          data: list
-        })
-        break;
-    }
-  })(roleType);
+  let roleInfo = await getRoleIdByRoleType(roleType);
+  list = await User.findUserByRoleId(roleInfo._id, skip, count);
+  res.json({
+    code: 0,
+    message: 'ok',
+    data: list
+  })
 
 });
 
@@ -200,8 +189,9 @@ router.get('/findUserById', async (req, res) => {
 
 // 根据用户 姓名 来查找用户
 router.get('/findUserByName', async (req, res) => {
-  let {userName} = req.query;
-  let userInfo = await User.findUserByName(userName);
+  let {userName, skip, count, roleType} = req.query;
+  let roleInfo = await getRoleIdByRoleType(roleType);
+  let userInfo = await User.findUserByName(userName, roleInfo._id, skip, count);
   res.json({
     code: 0,
     message: 'ok',
@@ -292,6 +282,40 @@ router.get('/excel', async (req, res) => {
 router.post('/changeUserStatusByUserId', async (req, res) => {
   let {userId, status} = req.body;
   User.changeUserStatusByUserId(userId, status)
+  .then(result=>{
+    res.json({
+      code: 0, 
+      message: 'ok',
+      data: null
+    });
+  })
+  .catch(error=>{
+    res.json({
+      code: -1, 
+      message: error.message,
+      data: null
+    });
+  })
+});
+
+
+// 根据多个参数查找用户
+router.get('/getUserBymultiParams', async (req, res) => {
+  let {roleType, skip, count, userSource, certification, status} = req.query;
+  let roleInfo = await getRoleIdByRoleType(roleType);
+  let userInfo = await User.getUserBymultiParams(userSource, certification, status, roleInfo._id, skip, count);
+  res.json({
+    code: 0,
+    message: 'ok',
+    data: userInfo
+  })
+});
+
+
+// 修改用户信息
+router.post('/modifyUserInfo', async (req, res) => {
+  let {tel, email, sex, userSource, status, mailAddress, certification, userId} = req.body;
+  User.modifyUserInfo(tel, email, sex, userSource, status, mailAddress, certification, userId)
   .then(result=>{
     res.json({
       code: 0, 
