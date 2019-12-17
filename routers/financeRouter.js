@@ -1,5 +1,4 @@
 const express = require('express');
-// const Role = require('../model/Role');
 const { mock } = require("mockjs");
 const moment = require('moment');
 const router = new express.Router();

@@ -28,6 +28,8 @@ server.use('/api/role', require('./routers/roleRouter'));
 server.use('/api/order', require('./routers/orderRouter'));
 // 财富
 server.use('/api/finance', require('./routers/financeRouter'));
+// 房屋
+server.use('/api/house', require('./routers/houseRouter'));
 
 
 // 连接数据库 启动服务

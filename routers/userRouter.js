@@ -341,7 +341,7 @@ router.get('/getSummaryData', async (req, res) => {
     message: 'ok',
     data: mock({
       'addToday|10-200': 1,
-      'rent|1000-10000': 1,
+      'userSum|1000-10000': 1,
     })
   });
 });
