@@ -137,7 +137,7 @@ router.get('/logout', (req, res)=>{
 });
 
 
-// 根据角色 id 查找角色用户 分页功能
+// 根据角色 类型 查找角色用户 分页功能  0:管理员 / 1:Agent / 2:房东 / 3:房客
 router.get('/findUserByRoleType', async (req, res) => {
   let {roleType, skip, count} = req.query;
   let list = null;
@@ -309,8 +309,20 @@ router.post('/changeUserStatusByUserId', async (req, res) => {
 });
 
 
-
 // mock数据
+// 获取今日概述数据
+router.get('/getSummaryData', async (req, res) => {
+  res.json({
+    code: 0,
+    message: 'ok',
+    data: mock({
+      'addToday|10-200': 1,
+      'rent|1000-10000': 1,
+    })
+  });
+});
+
+
 // 用户数据 mock 0:管理员 / 1:Agent / 2:房东 / 3: 房客
 router.get('/userInfoMock', async (req, res) => {
 
@@ -325,7 +337,7 @@ router.get('/userInfoMock', async (req, res) => {
             "list|2": [{
               userName : "@cname()",
               password : "@string()",
-              roleId : "5df5d2a676dc481f7408db1c",
+              _id : "5df5d2a676dc481f7408db1c",
               roleType : "0",
               registerDate : new Date().getTime(),
               nearDate : new Date().getTime(),
@@ -352,7 +364,7 @@ router.get('/userInfoMock', async (req, res) => {
             "list|10": [{
               userName : "@cname()",
               password : "@string()",
-              roleId : "5df5d2e076dc481f7408db1f",
+              _id : "5df5d2e076dc481f7408db1f",
               roleType : "1",
               registerDate : new Date().getTime(),
               nearDate : new Date().getTime(),
@@ -379,7 +391,7 @@ router.get('/userInfoMock', async (req, res) => {
             "list|15": [{
               userName : "@cname()",
               password : "@string()",
-              roleId : "5df5d2d476dc481f7408db1d",
+              _id : "5df5d2d476dc481f7408db1d",
               roleType : "2",
               registerDate : new Date().getTime(),
               nearDate : new Date().getTime(),
@@ -406,7 +418,7 @@ router.get('/userInfoMock', async (req, res) => {
             "list|20": [{
               userName : "@cname()",
               password : "@string()",
-              roleId : "5df767db30e65e30946f8fe4",
+              _id : "5df767db30e65e30946f8fe4",
               roleType : "3",
               registerDate : new Date().getTime(),
               nearDate : new Date().getTime(),

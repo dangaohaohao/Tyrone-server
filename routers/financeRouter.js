@@ -7,8 +7,10 @@ const router = new express.Router();
 
 
 // mock 数据
-// mock 平台流水数据
-function mockRangeAccountsData(begin, end){
+// mock 平台流水数据  
+// recharge:充值 / rent:房租缴纳 / service: 服务费用 / behelf:代缴费用
+// deposit:提现 / service: 服务费用支出 / behelf: 代缴费支出
+function mockRangeAccountData(begin, end){
   let beginArr = begin.split('-');
   beginArr[1] = beginArr[1]-1;
   var a = moment(beginArr);
@@ -23,16 +25,24 @@ function mockRangeAccountsData(begin, end){
   while(data.length <= result){
     data.push(mock({
       date: moment(date).format('YYYY-MM-DD'),
-      'newCount|100-500': 0,
-      'visitedCount|1000-10000': 0,
-      'userCount|100000-10000000': 0
+      in: {
+        "recharge|1000-10000": 0,
+        "rent|1000-30000": 0,
+        "service|1000-8000": 0,
+        "behelf|1000-5000": 0
+      },
+      out: {
+        "deposit|1000-10000": 0,
+        "service|1000-8000": 0,
+        "behelf|1000-5000": 0
+      }
     }));
     date.setDate(date.getDate()+1);
   };
   return data;
 }
 
-router.get('/user', (req, res)=>{
+router.get('/getAccountData', (req, res)=>{
   const {begin, end, count} = req.query;
 
   setTimeout(() => {
@@ -44,35 +54,6 @@ router.get('/user', (req, res)=>{
         message: 'ok',
         ['data|'+count]: [
           {
-              'newCount|100-500': 0,
-              'visitedCount|1000-10000': 0,
-              'userCount|100000-10000000': 0
-          }
-        ]})); 
-    }
-    else{
-      res.json({
-        code: 0,
-        message: 'ok',
-        data: mockRangeUserData(begin, end)
-      });
-    }
-  }, 1000);
-  
-   
-})
-
-
-router.get("/stat", (req, res) => {
-  const { begin, end, type, today } = req.query;
-
-  setTimeout(() => {
-    if (today) {
-      res.json(
-        mock({
-          code: 0,
-          message: "ok",
-          data: {
             in: {
               "recharge|1000-10000": 0,
               "rent|1000-30000": 0,
@@ -85,11 +66,22 @@ router.get("/stat", (req, res) => {
               "behelf|1000-5000": 0
             }
           }
-        })
-      );
+        ]})); 
+    }
+    else{
+      res.json({
+        code: 0,
+        message: 'ok',
+        data: mockRangeAccountData(begin, end)
+      });
     }
   }, 1000);
-});
+  
+   
+})
+
+
+
 
 
 module.exports = router;

@@ -112,8 +112,7 @@ module.exports.findByNameAndPsd = async(userName, password) => {
 // 根据角色id 查找角色用户 分页功能
 module.exports.findUserByRoleId = async (roleId, skip, count) => {
   let id = mongoose.Types.ObjectId(roleId);
-  return await User.find({roleId: id});
-  // .skip(skip).limit(count)
+  return await User.find({roleId: id}).skip(Number(skip)).limit(Number(count));
 }
 
 // 根据用户 id 来查找用户
