@@ -6,9 +6,7 @@ const router = new express.Router();
 
 // 添加房屋
 router.post('/add', async (req, res) => {
-  console.log(req.body);
   let houseInfo = req.body;
-  console.log(houseInfo);
   House.add(houseInfo)
     .then((houseInfor)=>{
       res.json({
@@ -24,6 +22,38 @@ router.post('/add', async (req, res) => {
         data: null,
       })
     })
+});
+
+// 修改房屋
+router.post('/modifyHouseInfo', async (req, res) => {
+  let { houseId } = req.body;
+  let houseInfo = req.body;
+  House.modifyHouseInfo(houseId, houseInfo)
+  .then(houseInfor=>{
+    res.json({
+      code: 0, 
+      message: 'ok',
+      data: null
+    });
+  })
+  .catch(error=>{
+    res.json({
+      code: -1, 
+      message: error.message,
+      data: null
+    });
+  })
+});
+
+// 根据房屋 id 来查找房屋
+router.get('/findHouseById', async (req, res) => {
+  let {houseId} = req.query;
+  let houseInfo = await House.findHouseById(houseId);
+  res.json({
+    code: 0,
+    message: 'ok',
+    data: houseInfo
+  })
 });
 
 

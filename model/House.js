@@ -111,7 +111,7 @@ const House = mongoose.model('house', new mongoose.Schema({
     type: String,
     required: true
   },
-  // 房屋图片
+  // 封面图片
   housePic: {
     type: String,
     default: "http://dummyimage.com/'300x300'/c6f279"
@@ -131,6 +131,19 @@ module.exports.add = async (houseInfo) => {
   return await house.save();
 }
 
+// 修改房屋
+module.exports.modifyHouseInfo = async (houseId, houseInfo) => {
+  let id = mongoose.Types.ObjectId(houseId);
+  return await House.findByIdAndUpdate(id, houseInfo);
+}
+
+// 根据房屋 id 来查找房屋
+module.exports.findHouseById = async (houseId) => {
+  let id = mongoose.Types.ObjectId(houseId);
+  return await House.findById({
+    "_id": id
+  });
+}
 
 
 
