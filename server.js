@@ -30,6 +30,8 @@ server.use('/api/order', require('./routers/orderRouter'));
 server.use('/api/finance', require('./routers/financeRouter'));
 // 房屋
 server.use('/api/house', require('./routers/houseRouter'));
+// 数据
+server.use('/api/data', require('./routers/dataRouter'));
 
 
 // 连接数据库 启动服务
