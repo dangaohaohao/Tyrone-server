@@ -57,6 +57,7 @@ router.get('/findHouseById', async (req, res) => {
 });
 
 
+
 // mock数据
 // 获取今日房屋概述数据
 // addToday: 今日新增 | houseSum: 房屋总数 | rented: 已出租 | notLet: 未出租
@@ -98,9 +99,6 @@ function mockRangeRentedData(begin, end){
 // mock 房屋出租情况
 router.get('/getRentedData', (req, res)=>{
   const {begin, end, count} = req.query;
-
-  setTimeout(() => {
-
     if(count > 0){
       res.json(mock({
         code: 0,
@@ -118,10 +116,21 @@ router.get('/getRentedData', (req, res)=>{
         data: mockRangeRentedData(begin, end)
       });
     }
-  }, 1000);
-  
-   
 })
+
+// mock 历史租金情况
+router.get('/getRentalData', (req, res) => {
+  res.json({
+    code: 0,
+    message: 'ok',
+    data: mock({
+      "list|12": [{
+        "id|+1": 0,
+        "rental|800-2000": 0,
+      }]
+    })
+  });
+});
 
 
 module.exports = router;
