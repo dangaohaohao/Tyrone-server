@@ -13,7 +13,7 @@
     "excel-export": "^0.5.1",
     "express": "^4.17.1",
     "mockjs": "^1.1.0",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "mongoose": "^5.8.1"
   }
 }
